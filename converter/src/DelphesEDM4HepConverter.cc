@@ -313,12 +313,13 @@ void DelphesEDM4HepConverter::processClusters(const TClonesArray* delphesCollect
     // NOTE: Particle-Flow Neutral are either photons or K_L in Delphes
     auto pid = (delphesCand->Ehad > 0.) ? 130 : 22;
     cand.setPDG(pid); // NOTE: set PID of cluster consistent with mass
-
-    // store position and time of neutral candidate in a CalorimeterHit
+    // Store position and time of neutral candidate in a CalorimeterHit
     auto calorimeterHit = calorimeterHitColl->create();
-    calorimeterHit.setTime(delphesCand->T); // in seconds
+    calorimeterHit.setTime(delphesCand->T); // In seconds
     edm4hep::Vector3f position(delphesCand->X, delphesCand->Y, delphesCand->Z);
     calorimeterHit.setPosition(position);
+    // Add energy (Delphes uses GeV units) — choose total tower energy or Eem/Ehad as desired
+    calorimeterHit.setEnergy(static_cast<float>(delphesCand->E));
     cluster.addToHits(calorimeterHit);
     cand.addToClusters(cluster);
 
